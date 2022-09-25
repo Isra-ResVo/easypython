@@ -2,9 +2,11 @@
 
 from requests_html import AsyncHTMLSession
 import requests
+from zipfile import ZipFile
 
 # Session and request
-def down_zip_async(url:str, path_dir:str = '/data', url_file:str = None)->None:
+def down_zip_async(url:str, path_dir:str = '/data', url_file:str = None,
+                     unzip:bool = True)->None:
     '''
     This function dowload all the zip files from a web page,
     the links must to finish in zip extention to be recognized.
@@ -36,6 +38,14 @@ def down_zip_async(url:str, path_dir:str = '/data', url_file:str = None)->None:
             with open(dir_path + file_name, mode='wb') as zipfile:
                 zipfile.write(response.content)
             print(f'succcesful downloaded file: {file_name}')
+
+    if unzip:
+        with open(path_file, mode='r') as url_file:
+            for link in url_file:
+                file_name = link.split('/')[-1].split('.')[0]
+
+                with ZipFile(dir_path+file_name+'.zip','r') as zip_ref:
+                    zip_ref.extractall(dir_path+file_name)
 
 def main():
     # example of use
